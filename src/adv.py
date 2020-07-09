@@ -1,4 +1,6 @@
 from room import Room
+from player import Player
+from item import Item
 
 # Declare all the rooms
 
@@ -38,6 +40,10 @@ room['treasure'].s_to = room['narrow']
 #
 
 # Make a new player object that is currently in the 'outside' room.
+print('Welcome to an adventure game!')
+player_name = input('Enter your name: ')
+player = Player(player_name, room['outside'])
+print(f'Welcome, {player_name}! Let the game begin!')
 
 # Write a loop that:
 #
@@ -49,3 +55,56 @@ room['treasure'].s_to = room['narrow']
 # Print an error message if the movement isn't allowed.
 #
 # If the user enters "q", quit the game.
+def no_room_error():
+        print('Sorry, there is no room in that direction. Try again.')
+        
+def begin_game():
+    print(f'You are in {player.current_room}')
+    player_input = ''
+    while player_input != int:
+        player_input = input('Press "n" for north, "s" for south, "e" for east, "w" for west, or "q" to quit: ')
+
+        if player_input == 'n':
+            if(player.current_room.n_to != None):
+                player.current_room = player.current_room.n_to
+                print(f'You are now in {player.current_room}')
+            else:
+                no_room_error()
+                
+
+        elif player_input == 's':
+            if(player.current_room.s_to != None):
+                player.current_room = player.current_room.s_to
+                print(f'You are now in {player.current_room}')                    
+            else:
+                no_room_error()
+
+        elif player_input == 'e':
+            if(player.current_room.e_to != None):
+                player.current_room = player.current_room.e_to
+                print(f'You are now in {player.current_room}')
+            else:
+                no_room_error()
+                
+
+        elif player_input == 'w':
+            if(player.current_room.w_to != None):
+                player.current_room = player.current_room.w_to
+                print(f'You are now in {player.current_room}')
+            else:
+                no_room_error()
+
+        elif player_input == 'q':
+            print(f'Thanks for playing, {player_name}!')
+            exit()
+
+        else: 
+            print('Please follow the directions...')
+
+begin_game()
+
+
+
+
+        
+
