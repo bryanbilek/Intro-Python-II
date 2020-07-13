@@ -1,10 +1,12 @@
 from room import Room
+from player import Player
+from item import Item
 
 # Declare all the rooms
 
 room = {
     'outside':  Room("Outside Cave Entrance",
-                     "North of you, the cave mount beckons"),
+                     "North of you, the cave mount beckons."),
 
     'foyer':    Room("Foyer", """Dim light filters in from the south. Dusty
 passages run north and east."""),
@@ -21,6 +23,13 @@ chamber! Sadly, it has already been completely emptied by
 earlier adventurers. The only exit is to the south."""),
 }
 
+# Declare all the items
+
+item = {
+    'gold': Item('Gold', 'Worth defending your live for!'),
+    'sword': Item('Sword', 'Because this world is dangerous!'),
+    'food': Item('Food', 'You will need this for survival!')
+}
 
 # Link rooms together
 
@@ -33,11 +42,20 @@ room['narrow'].w_to = room['foyer']
 room['narrow'].n_to = room['treasure']
 room['treasure'].s_to = room['narrow']
 
+# Link items to rooms
+room['foyer'].append_item(item['food'])
+room['narrow'].append_item(item['sword'])
+room['treasure'].append_item(item['gold'])
+
 #
 # Main
 #
 
 # Make a new player object that is currently in the 'outside' room.
+print('Welcome to an adventure game!')
+player_name = input('Enter your name: ')
+player = Player(player_name, room['outside'])
+print(f'Welcome, {player_name}! Let the game begin!')
 
 # Write a loop that:
 #
@@ -49,3 +67,81 @@ room['treasure'].s_to = room['narrow']
 # Print an error message if the movement isn't allowed.
 #
 # If the user enters "q", quit the game.
+def no_room_error():
+        print('Sorry, there is no room in that direction. Try again.')
+
+def item_checker():
+    for item in player.current_room.items:
+        print(f'In this room there is {item}')
+
+def begin_game():
+    print(f'You are in {player.current_room}')
+    player_input = ''
+    while player_input != int:
+        player_input = input('Press "n" for north, "s" for south, "e" for east, "w" for west, "i" or "inventory" to see your items, or "q" to quit: ')
+
+        if player_input == 'n':
+            if(player.current_room.n_to != None):
+                player.current_room = player.current_room.n_to
+                print(f'You are now in {player.current_room}')
+                item_checker()
+            else:
+                no_room_error()
+                
+
+        elif player_input == 's':
+            if(player.current_room.s_to != None):
+                player.current_room = player.current_room.s_to
+                print(f'You are now in {player.current_room}') 
+                item_checker()                   
+            else:
+                no_room_error()
+
+        elif player_input == 'e':
+            if(player.current_room.e_to != None):
+                player.current_room = player.current_room.e_to
+                print(f'You are now in {player.current_room}')
+                item_checker()
+            else:
+                no_room_error()
+                
+
+        elif player_input == 'w':
+            if(player.current_room.w_to != None):
+                player.current_room = player.current_room.w_to
+                print(f'You are now in {player.current_room}')
+                item_checker()
+            else:
+                no_room_error()
+
+        elif player_input == 'i' or 'inventory':
+            print(f'{player.items}')
+        
+        elif player_input == 'get' or 'take':
+            player.get_item(item[item]) 
+            item[item].on_take()
+            player.current_room.remove_item(item[item])           
+
+        elif player_input == 'drop':
+            if player.items < 1:
+                print('Nothing to drop...')
+            else:
+                player.drop_item(item[item])
+                item[item].on_drop()
+                player.current_room.append_item(item[item])
+                
+
+        elif player_input == 'q':
+            print(f'Thanks for playing, {player_name}!')
+            exit()
+
+        else: 
+            print('Please follow the directions...')
+
+begin_game()
+
+
+
+
+        
+
